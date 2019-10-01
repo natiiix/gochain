@@ -26,11 +26,12 @@ func main() {
 }
 
 func createBlockchain() *proto_types.Blockchain {
-	return &proto_types.Blockchain{
-		Blocks: []*proto_types.Block{
-			createBlockHashless("Genesis block", []byte{}),
-		},
+	chain := &proto_types.Blockchain{
+		Blocks: []*proto_types.Block{},
 	}
+
+	createBlock("Genesis block", chain)
+	return chain
 }
 
 func createBlockHashless(data string, prevHash []byte) *proto_types.Block {
@@ -42,7 +43,12 @@ func createBlockHashless(data string, prevHash []byte) *proto_types.Block {
 }
 
 func createBlock(data string, chain *proto_types.Blockchain) *proto_types.Block {
-	b := createBlockHashless(data, chain.Blocks[len(chain.Blocks)-1].Hash)
+	prevHash := []byte{}
+	if len(chain.Blocks) > 0 {
+		prevHash = chain.Blocks[len(chain.Blocks)-1].Hash
+	}
+
+	b := createBlockHashless(data, prevHash)
 	runWork(b)
 	chain.Blocks = append(chain.Blocks, b)
 	return b
