@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"crypto/sha256"
 	"encoding/binary"
 	"io/ioutil"
 	"log"
@@ -28,6 +30,17 @@ func createBlockHashless(data string, prevHash []byte) *proto_types.Block {
 		Data:          data,
 		PrevBlockHash: prevHash,
 	}
+}
+
+func getBlockHash(block *proto_types.Block) [32]byte {
+	blockBytes := bytes.Join([][]byte{
+		int64ToBytes(block.Timestamp),
+		[]byte(block.Data),
+		block.PrevBlockHash,
+		int64ToBytes(block.Nonce),
+	}, []byte{})
+
+	return sha256.Sum256(blockBytes)
 }
 
 func int64ToBytes(value int64) []byte {
