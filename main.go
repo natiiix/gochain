@@ -15,8 +15,14 @@ import (
 	"github.com/natiiix/gochain/proto_types"
 )
 
+const chainFile = "chain.dat"
+
 func main() {
-	chain := createBlockchain()
+	chain := &proto_types.Blockchain{}
+	err := unmarshal(chainFile, chain)
+	if err != nil {
+		chain = createBlockchain()
+	}
 
 	b1 := createBlock("first", chain)
 	fmt.Println(blockToString(b1))
@@ -32,6 +38,8 @@ func main() {
 	for i, b := range chain.Blocks {
 		fmt.Printf("[%v] %v\n", i, blockToString(b))
 	}
+
+	marshal(chainFile, chain)
 }
 
 func createBlockchain() *proto_types.Blockchain {
@@ -123,14 +131,18 @@ func marshal(file string, msg proto.Message) {
 	}
 }
 
-func unmarshal(file string, msg proto.Message) {
+func unmarshal(file string, msg proto.Message) error {
 	in, err := ioutil.ReadFile(file)
 
 	if err != nil {
-		log.Fatalln("Error reading file:", err)
+		// log.Fatalln("Error reading file:", err)
+		return err
 	}
 
 	if err := proto.Unmarshal(in, msg); err != nil {
 		log.Fatalln("Failed to parse address book:", err)
+		// return err
 	}
+
+	return nil
 }
