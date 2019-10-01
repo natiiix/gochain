@@ -33,6 +33,13 @@ func createBlockHashless(data string, prevHash []byte) *proto_types.Block {
 	}
 }
 
+func createBlock(data string, chain *proto_types.Blockchain) *proto_types.Block {
+	b := createBlockHashless(data, chain.Blocks[len(chain.Blocks)-1].Hash)
+	runWork(b)
+	chain.Blocks = append(chain.Blocks, b)
+	return b
+}
+
 func getBlockHash(block *proto_types.Block) [32]byte {
 	blockBytes := bytes.Join([][]byte{
 		int64ToBytes(block.Timestamp),
