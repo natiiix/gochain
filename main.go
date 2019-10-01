@@ -6,6 +6,7 @@ import (
 	"encoding/binary"
 	"io/ioutil"
 	"log"
+	"math"
 	"time"
 
 	"github.com/golang/protobuf/proto"
@@ -41,6 +42,25 @@ func getBlockHash(block *proto_types.Block) [32]byte {
 	}, []byte{})
 
 	return sha256.Sum256(blockBytes)
+}
+
+func runWork(block *proto_types.Block) {
+	block.Nonce = 0
+
+	for {
+		hash := getBlockHash(block)
+
+		if hashCondition(hash) {
+			block.Hash = hash[:]
+			break
+		}
+
+		if block.Nonce == math.MaxInt64 {
+			log.Fatalln("Unable to find nonce for block:", block)
+		} else {
+			block.Nonce++
+		}
+	}
 }
 
 func int64ToBytes(value int64) []byte {
