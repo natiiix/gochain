@@ -91,7 +91,7 @@ func int64ToBytes(value int64) []byte {
 }
 
 func hashCondition(hash [32]byte) bool {
-	return hash[0] == 0
+	return hash[0] == 0 && hash[1] == 0
 }
 
 func marshal(file string, msg proto.Message) {
