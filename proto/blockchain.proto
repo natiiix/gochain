@@ -1,0 +1,8 @@
+syntax = "proto3";
+package proto_types;
+
+import "block.proto";
+
+message Blockchain {
+  repeated Block blocks = 1; 
+}
