@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -16,13 +17,21 @@ import (
 
 func main() {
 	chain := createBlockchain()
+
 	b1 := createBlock("first", chain)
-	fmt.Println(b1)
+	fmt.Println(blockToString(b1))
+
 	b2 := createBlock("second", chain)
-	fmt.Println(b2)
+	fmt.Println(blockToString(b2))
+
 	b3 := createBlock("third", chain)
-	fmt.Println(b3)
-	fmt.Println(chain)
+	fmt.Println(blockToString(b3))
+
+	fmt.Println("----------------------------------------------------------------")
+
+	for i, b := range chain.Blocks {
+		fmt.Printf("[%v] %v\n", i, blockToString(b))
+	}
 }
 
 func createBlockchain() *proto_types.Blockchain {
@@ -82,6 +91,14 @@ func runWork(block *proto_types.Block) {
 			block.Nonce++
 		}
 	}
+}
+
+func blockToString(block *proto_types.Block) string {
+	return fmt.Sprintf("{ Timestamp: %v, Data: \"%v\", PrevBlockHash: %v, Nonce: %v, Hash: %v }",
+		time.Unix(block.Timestamp, 0),
+		block.Data,
+		hex.EncodeToString(block.PrevBlockHash),
+		block.Nonce, hex.EncodeToString(block.Hash))
 }
 
 func int64ToBytes(value int64) []byte {
