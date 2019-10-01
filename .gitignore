@@ -1,1 +1,1 @@
-src/*.pb.go
+proto_types/*.pb.go
