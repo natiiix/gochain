@@ -13,6 +13,14 @@ func main() {
 	// TODO
 }
 
+func createBlockchain() *proto_types.Blockchain {
+	return &proto_types.Blockchain{
+		Blocks: []*proto_types.Block{
+			createBlockHashless("Genesis block", []byte{}),
+		},
+	}
+}
+
 func createBlockHashless(data string, prevHash []byte) *proto_types.Block {
 	return &proto_types.Block{
 		Data:          data,
