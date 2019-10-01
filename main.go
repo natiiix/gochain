@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"math"
@@ -14,7 +15,14 @@ import (
 )
 
 func main() {
-	// TODO
+	chain := createBlockchain()
+	b1 := createBlock("first", chain)
+	fmt.Println(b1)
+	b2 := createBlock("second", chain)
+	fmt.Println(b2)
+	b3 := createBlock("third", chain)
+	fmt.Println(b3)
+	fmt.Println(chain)
 }
 
 func createBlockchain() *proto_types.Blockchain {
