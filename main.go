@@ -3,12 +3,22 @@ package main
 import (
 	"io/ioutil"
 	"log"
+	"time"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/natiiix/gochain/proto_types"
 )
 
 func main() {
 	// TODO
+}
+
+func createBlockHashless(data string, prevHash []byte) *proto_types.Block {
+	return &proto_types.Block{
+		Data:          data,
+		PrevBlockHash: prevHash,
+		Timestamp:     time.Now().Unix(),
+	}
 }
 
 func marshal(file string, msg proto.Message) {
