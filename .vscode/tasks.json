@@ -1,0 +1,10 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "proto-build",
+			"type": "shell",
+			"command": "protoc --proto_path=${workspaceFolder}/proto/ --go_out=${workspaceFolder}/src/ ${workspaceFolder}/proto/block.proto"
+		}
+	]
+}
