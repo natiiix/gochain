@@ -1,5 +1,5 @@
 syntax = "proto3";
-package main;
+package proto_types;
 
 message Block {
   bytes hash = 1;
