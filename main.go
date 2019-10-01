@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/binary"
 	"io/ioutil"
 	"log"
 	"time"
@@ -23,10 +24,16 @@ func createBlockchain() *proto_types.Blockchain {
 
 func createBlockHashless(data string, prevHash []byte) *proto_types.Block {
 	return &proto_types.Block{
+		Timestamp:     time.Now().Unix(),
 		Data:          data,
 		PrevBlockHash: prevHash,
-		Timestamp:     time.Now().Unix(),
 	}
+}
+
+func int64ToBytes(value int64) []byte {
+	arr := make([]byte, 8)
+	binary.LittleEndian.PutUint64(arr, uint64(value))
+	return arr
 }
 
 func marshal(file string, msg proto.Message) {
