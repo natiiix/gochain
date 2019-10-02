@@ -1,2 +1,3 @@
+.vscode/
 proto_types/*.pb.go
 *.dat
