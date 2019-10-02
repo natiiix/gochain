@@ -24,6 +24,10 @@ func main() {
 		chain = createBlockchain()
 	}
 
+	if !validateChain(chain) {
+		log.Fatalln("Invalid initial chain!")
+	}
+
 	b1 := createBlock("first", chain)
 	fmt.Println(blockToString(b1))
 
@@ -37,6 +41,10 @@ func main() {
 
 	for i, b := range chain.Blocks {
 		fmt.Printf("[%v] %v\n", i, blockToString(b))
+	}
+
+	if !validateChain(chain) {
+		log.Fatalln("Invalid final chain!")
 	}
 
 	marshal(chainFile, chain)
@@ -71,6 +79,36 @@ func createBlock(data string, chain *proto_types.Blockchain) *proto_types.Block 
 	return b
 }
 
+func runWork(block *proto_types.Block) {
+	for block.Nonce = 0; ; block.Nonce++ {
+		valid, hash := validateBlock(block)
+
+		if valid {
+			block.Hash = hash[:]
+			return
+		}
+
+		if block.Nonce == math.MaxInt64 {
+			log.Fatalln("Unable to find nonce for block:", block)
+		}
+	}
+}
+
+func validateChain(chain *proto_types.Blockchain) bool {
+	for _, block := range chain.Blocks {
+		if valid, _ := validateBlock(block); !valid {
+			return false
+		}
+	}
+
+	return true
+}
+
+func validateBlock(block *proto_types.Block) (bool, [32]byte) {
+	hash := getBlockHash(block)
+	return hashCondition(hash), hash
+}
+
 func getBlockHash(block *proto_types.Block) [32]byte {
 	blockBytes := bytes.Join([][]byte{
 		int64ToBytes(block.Timestamp),
@@ -80,25 +118,6 @@ func getBlockHash(block *proto_types.Block) [32]byte {
 	}, []byte{})
 
 	return sha256.Sum256(blockBytes)
-}
-
-func runWork(block *proto_types.Block) {
-	block.Nonce = 0
-
-	for {
-		hash := getBlockHash(block)
-
-		if hashCondition(hash) {
-			block.Hash = hash[:]
-			break
-		}
-
-		if block.Nonce == math.MaxInt64 {
-			log.Fatalln("Unable to find nonce for block:", block)
-		} else {
-			block.Nonce++
-		}
-	}
 }
 
 func blockToString(block *proto_types.Block) string {
